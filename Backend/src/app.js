@@ -1,7 +1,9 @@
     // backend brain
     const express = require('express'); // import express tool
     const app = express(); // create an express app
+    const authRoutes = require('./routes/authRoutes'); // import auth routes
     app.use(express.json()); // enable json
+    app.use('/auth', authRoutes);
 
     app.get("/health", (req, res) => {
         res.json({ status: "ok", message: "Backend Running" });

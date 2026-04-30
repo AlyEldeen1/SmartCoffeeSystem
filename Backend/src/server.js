@@ -1,9 +1,11 @@
 // starts server
+require('dotenv').config(); // load env
 const app = require('./app'); // import the app
 
-require('dotenv').config(); // load env
 
 const PORT = process.env.PORT || 3000;
+
+const pool = require('./config/db');
 
 
 app.get('/', (req, res) => {
