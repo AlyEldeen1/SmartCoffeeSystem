@@ -27,18 +27,24 @@ try {
     // 1. find user by email
     const user = await getUserByEmail(email);
     if(!user) {
-        return res.status(400).json({ error: 'invalid email or password'});
+        return res.status(400).json({ error: 'email not found'});
     }
     // 2. check password
     const isMatch= await bcrypt.compare(password, user.password_hash);
     if(!isMatch) {
-        return res.status(400).json({ error: 'invalid email or password'});
+        return res.status(400).json({ error: 'invalid password'});
     }
     // 3. create token
     const token = jwt.sign(
         {
             id: user.id,
-            role: user.role
+            role: user.role,
+            name: user.name,
+            email: user.email,
+            phone_number: user.phone_number,
+            loyalty_points: user.loyalty_points,
+            is_verified: user.is_verified,
+            created_at: user.created_at
         },
         process.env.JWT_SECRET,
         { expiresIn: '1d' }

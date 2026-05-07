@@ -4,7 +4,7 @@
     const authRoutes = require('./routes/authRoutes'); // import auth routes
     const cors = require('cors'); // import cors
     
-    app.use(cors({ origin: "http://localhost:5174", credentials: true }));
+    app.use(cors({ origin: "http://localhost:5173", credentials: true }));
     app.use(express.json()); // enable json
     app.use('/auth', authRoutes);
 

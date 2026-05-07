@@ -1,19 +1,12 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Eye, EyeOff, Coffee, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import API from "../services/api";
 
@@ -21,6 +14,15 @@ const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(1, "Password is required"),
 });
+
+const COLORS = {
+  green: "#172c17",
+  greenLight: "#1e3a1e",
+  gold: "#c9a96e",
+  goldDim: "#9a7a4e",
+  cream: "#f0e6d3",
+  white: "#f5f0ea",
+};
 
 export default function Login() {
   const navigate = useNavigate();
@@ -43,7 +45,6 @@ export default function Login() {
     setServerError("");
     try {
       const response = await API.post("/auth/login", data);
-
       localStorage.setItem("token", response.data.token);
       navigate("/dashboard");
     } catch (err) {
@@ -52,164 +53,161 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex" style={{ background: "var(--mira-background, #faf8f5)" }}>
-      {/* ── Left Panel: Coffee Branding ── */}
+    <div
+      className="min-h-screen flex items-center justify-center p-6"
+      style={{ background: COLORS.green }}
+    >
+      <style>{`
+        @import url(‘https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500&display=swap’);
+      `}</style>
+
       <div
-        className="hidden lg:flex lg:w-5/12 xl:w-2/5 flex-col justify-between p-10 relative overflow-hidden"
-        style={{
-          background: "linear-gradient(160deg, #2c1a0e 0%, #4a2c17 60%, #6b3f22 100%)",
-        }}
+        className="w-full max-w-sm flex flex-col items-center gap-7"
+        style={{ maxWidth: "360px" }}
       >
-        {/* Decorative circles */}
-        <span
-          className="absolute -top-24 -left-24 w-72 h-72 rounded-full opacity-10"
-          style={{ background: "radial-gradient(circle, #d4a96a 0%, transparent 70%)" }}
-        />
-        <span
-          className="absolute bottom-20 -right-16 w-56 h-56 rounded-full opacity-10"
-          style={{ background: "radial-gradient(circle, #d4a96a 0%, transparent 70%)" }}
-        />
-
         {/* Logo */}
-        <div className="relative z-10 flex items-center gap-3">
+        <div className="flex flex-col items-center gap-3">
+          <svg width="70" height="70" viewBox="0 0 100 100">
+            <ellipse cx="50" cy="50" rx="46" ry="46" fill="none" stroke={COLORS.gold} strokeWidth="2.5" />
+            <line x1="50" y1="4" x2="50" y2="96" stroke={COLORS.gold} strokeWidth="1.5" opacity="0.5" />
+            <line x1="4" y1="50" x2="96" y2="50" stroke={COLORS.gold} strokeWidth="1.5" opacity="0.3" />
+            <line x1="36" y1="28" x2="36" y2="72" stroke={COLORS.gold} strokeWidth="4" strokeLinecap="round" />
+            <line x1="36" y1="50" x2="64" y2="28" stroke={COLORS.gold} strokeWidth="4" strokeLinecap="round" />
+            <line x1="36" y1="50" x2="64" y2="72" stroke={COLORS.gold} strokeWidth="4" strokeLinecap="round" />
+            <line x1="50" y1="50" x2="92" y2="30" stroke={COLORS.gold} strokeWidth="1" opacity="0.25" />
+            <line x1="50" y1="50" x2="92" y2="70" stroke={COLORS.gold} strokeWidth="1" opacity="0.25" />
+          </svg>
           <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center"
-            style={{ background: "rgba(212,169,106,0.2)", border: "1px solid rgba(212,169,106,0.3)" }}
+            style={{
+              fontFamily: "’Cinzel’, serif",
+              fontSize: "36px",
+              letterSpacing: "12px",
+              color: COLORS.gold,
+              fontWeight: 700,
+            }}
           >
-            <Coffee size={20} color="#d4a96a" />
+            KOFF
           </div>
-          <span style={{ fontFamily: "’Playfair Display’, Georgia, serif", color: "#d4a96a", fontSize: "1.1rem", fontWeight: 600 }}>
-            Smart Coffee
-          </span>
+          <div
+            style={{
+              fontSize: "10px",
+              letterSpacing: "4px",
+              color: COLORS.goldDim,
+              textTransform: "uppercase",
+            }}
+          >
+            Smart Coffee System
+          </div>
         </div>
 
-        {/* Centre copy */}
-        <div className="relative z-10">
-          <p style={{ fontFamily: "’Playfair Display’, Georgia, serif", fontSize: "2.6rem", lineHeight: 1.2, color: "#f5ede0", fontWeight: 700 }}>
-            Welcome back.
-          </p>
-          <p style={{ color: "rgba(245,237,224,0.55)", fontSize: "0.95rem", marginTop: "1rem", lineHeight: 1.7 }}>
-            Sign in to your account and continue<br />enjoying your favourite brews.
-          </p>
-        </div>
+        {/* Divider */}
+        <div
+          style={{
+            width: "100%",
+            height: "1px",
+            background: `linear-gradient(90deg, transparent, ${COLORS.gold}, transparent)`,
+          }}
+        />
+
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="w-full flex flex-col gap-3">
+          {/* Error banner */}
+          {serverError && (
+            <Alert
+              className="mb-2 border"
+              style={{
+                background: "#fff5f5",
+                borderColor: "#fca5a5",
+                borderRadius: "2px",
+              }}
+            >
+              <AlertDescription style={{ color: "#dc2626", fontSize: "0.85rem" }}>
+                {serverError}
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Email */}
+          <Field label="Email" error={errors.email?.message}>
+            <Input
+              {...register("email")}
+              type="email"
+              placeholder="your@email.com"
+              autoComplete="email"
+              aria-invalid={!!errors.email}
+              style={inputStyle(!!errors.email)}
+            />
+          </Field>
+
+          {/* Password */}
+          <Field label="Password" error={errors.password?.message}>
+            <div className="relative">
+              <Input
+                {...register("password")}
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                autoComplete="current-password"
+                aria-invalid={!!errors.password}
+                style={{ ...inputStyle(!!errors.password), paddingRight: "2.75rem" }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2"
+                style={{ color: COLORS.goldDim, lineHeight: 0 }}
+                tabIndex={-1}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </Field>
+
+          {/* Submit */}
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full mt-2 font-semibold tracking-widest transition-all duration-200 active:scale-[0.98]"
+            style={{
+              background: isSubmitting ? COLORS.goldDim : COLORS.gold,
+              color: COLORS.green,
+              border: "none",
+              borderRadius: "2px",
+              cursor: isSubmitting ? "not-allowed" : "pointer",
+              padding: "14px",
+              fontFamily: "’Cinzel’, serif",
+              fontSize: "12px",
+              letterSpacing: "4px",
+              textTransform: "uppercase",
+            }}
+          >
+            {isSubmitting ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 size={14} className="animate-spin" />
+                Signing In
+              </span>
+            ) : (
+              "Sign In"
+            )}
+          </Button>
+        </form>
 
         {/* Footer */}
-        <p style={{ color: "rgba(245,237,224,0.3)", fontSize: "0.78rem" }} className="relative z-10">
-          © {new Date().getFullYear()} Smart Coffee System
-        </p>
-      </div>
-
-      {/* ── Right Panel: Form ── */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-10">
-        <div className="w-full max-w-md">
-          {/* Mobile logo */}
-          <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <Coffee size={22} style={{ color: "#6b3f22" }} />
-            <span style={{ fontFamily: "’Playfair Display’, Georgia, serif", color: "#2c1a0e", fontWeight: 600 }}>
-              Smart Coffee
-            </span>
-          </div>
-
-          <Card
-            className="border-0 shadow-none"
-            style={{ background: "transparent" }}
+        <div style={{ fontSize: "12px", color: COLORS.goldDim, textAlign: "center" }}>
+          Don’t have an account?{" "}
+          <Link
+            to="/register"
+            style={{
+              color: COLORS.gold,
+              cursor: "pointer",
+              textDecoration: "none",
+              fontWeight: 600,
+            }}
+            onMouseEnter={(e) => (e.target.style.textDecoration = "underline")}
+            onMouseLeave={(e) => (e.target.style.textDecoration = "none")}
           >
-            <CardHeader className="px-0 pb-6">
-              <CardTitle
-                style={{
-                  fontFamily: "’Playfair Display’, Georgia, serif",
-                  fontSize: "1.9rem",
-                  color: "#2c1a0e",
-                  fontWeight: 700,
-                  lineHeight: 1.2,
-                }}
-              >
-                Sign in
-              </CardTitle>
-              <CardDescription style={{ color: "#8a7060", marginTop: "0.4rem", fontSize: "0.9rem" }}>
-                Don’t have an account?{" "}
-                <Link
-                  to="/register"
-                  style={{ color: "#6b3f22", fontWeight: 600, textDecoration: "underline", textUnderlineOffset: "3px" }}
-                >
-                  Create one
-                </Link>
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent className="px-0">
-              {/* Error banner */}
-              {serverError && (
-                <Alert
-                  className="mb-5 border"
-                  style={{ background: "#fff5f5", borderColor: "#fca5a5", borderRadius: "10px" }}
-                >
-                  <AlertDescription style={{ color: "#dc2626" }}>{serverError}</AlertDescription>
-                </Alert>
-              )}
-
-              <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
-                {/* Email */}
-                <Field label="Email Address" error={errors.email?.message}>
-                  <Input
-                    {...register("email")}
-                    type="email"
-                    placeholder="aly@example.com"
-                    autoComplete="email"
-                    aria-invalid={!!errors.email}
-                    style={inputStyle(!!errors.email)}
-                  />
-                </Field>
-
-                {/* Password */}
-                <Field label="Password" error={errors.password?.message}>
-                  <div className="relative">
-                    <Input
-                      {...register("password")}
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
-                      autoComplete="current-password"
-                      aria-invalid={!!errors.password}
-                      style={{ ...inputStyle(!!errors.password), paddingRight: "2.75rem" }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((v) => !v)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2"
-                      style={{ color: "#8a7060", lineHeight: 0 }}
-                      tabIndex={-1}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
-                    >
-                      {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
-                    </button>
-                  </div>
-                </Field>
-
-                {/* Submit */}
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full mt-1 h-11 font-semibold text-sm tracking-wide transition-all duration-200 active:scale-[0.98]"
-                  style={{
-                    background: isSubmitting ? "#a0856a" : "linear-gradient(135deg, #4a2c17 0%, #6b3f22 100%)",
-                    color: "#f5ede0",
-                    border: "none",
-                    borderRadius: "10px",
-                    cursor: isSubmitting ? "not-allowed" : "pointer",
-                  }}
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center gap-2">
-                      <Loader2 size={16} className="animate-spin" />
-                      Signing in…
-                    </span>
-                  ) : (
-                    "Sign In"
-                  )}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+            Register
+          </Link>
         </div>
       </div>
     </div>
@@ -218,20 +216,23 @@ export default function Login() {
 
 function Field({ label, error, children }) {
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-1">
       <Label
         style={{
-          fontSize: "0.82rem",
+          fontSize: "10px",
           fontWeight: 600,
-          color: "#4a2c17",
-          letterSpacing: "0.01em",
+          color: COLORS.goldDim,
+          letterSpacing: "3px",
+          textTransform: "uppercase",
         }}
       >
         {label}
       </Label>
       {children}
       {error && (
-        <p style={{ color: "#dc2626", fontSize: "0.78rem", marginTop: "1px" }}>{error}</p>
+        <p style={{ color: "#fca5a5", fontSize: "0.75rem", marginTop: "2px" }}>
+          {error}
+        </p>
       )}
     </div>
   );
@@ -239,14 +240,15 @@ function Field({ label, error, children }) {
 
 function inputStyle(hasError) {
   return {
-    height: "2.65rem",
-    borderRadius: "9px",
-    border: `1.5px solid ${hasError ? "#fca5a5" : "#e8ddd4"}`,
-    background: "#fff",
-    fontSize: "0.9rem",
-    color: "#2c1a0e",
-    transition: "border-color 0.15s",
+    height: "42px",
+    borderRadius: "2px",
+    border: `1px solid ${hasError ? "#fca5a5" : "#2a4a2a"}`,
+    background: COLORS.greenLight,
+    color: COLORS.cream,
+    fontFamily: "’Raleway’, sans-serif",
+    fontSize: "13px",
+    padding: "12px 14px",
+    transition: "border-color 0.2s",
     outline: "none",
-    boxShadow: hasError ? "0 0 0 3px rgba(220,38,38,0.08)" : "none",
   };
 }

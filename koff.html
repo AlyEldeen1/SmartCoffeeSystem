@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KOFF</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #172c17;
+    --green-light: #1e3a1e;
+    --gold: #c9a96e;
+    --gold-dim: #9a7a4e;
+    --cream: #f0e6d3;
+    --brown: #7a4a20;
+    --white: #f5f0ea;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--green);
+    color: var(--gold);
+    font-family: 'Raleway', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── PAGE SYSTEM ── */
+  .page { display: none; min-height: 100vh; flex-direction: column; }
+  .page.active { display: flex; }
+
+  /* ── NAV ── */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    background: var(--green);
+    position: sticky; top: 0; z-index: 100;
+  }
+  nav a {
+    color: var(--gold);
+    text-decoration: none;
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color .2s;
+  }
+  nav a:hover { color: var(--cream); }
+  nav a.logout { color: var(--gold-dim); }
+  .nav-left { display: flex; gap: 40px; align-items: center; }
+  .nav-right { display: flex; gap: 36px; align-items: center; }
+
+  /* ── GOLD DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 24px;
+  }
+
+  /* ══════════════════════════════════
+     HOME PAGE
+  ══════════════════════════════════ */
+  #home .hero {
+    display: flex;
+    align-items: center;
+    padding: 40px 48px 28px;
+    position: relative;
+  }
+  .logo-block { display: flex; align-items: center; gap: 20px; }
+  .koff-svg { width: 90px; height: 90px; }
+  .koff-wordmark {
+    font-family: 'Cinzel', serif;
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    color: var(--gold);
+  }
+  .coffee-bean {
+    position: absolute;
+    right: 48px;
+    top: 30px;
+    width: 64px;
+    opacity: .9;
+  }
+
+  /* ── BOTTOM SPLIT ── */
+  .home-body {
+    display: flex;
+    flex: 1;
+    gap: 1px;
+    padding: 32px 48px;
+    background: var(--green-light);
+  }
+  .home-left {
+    flex: 1;
+    padding-right: 48px;
+    border-right: 1px solid var(--gold-dim);
+  }
+  .home-right {
+    flex: 1;
+    padding-left: 48px;
+  }
+  .section-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold-dim);
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+  .card-row { display: flex; gap: 16px; margin-bottom: 24px; }
+  .card {
+    background: var(--green);
+    border: 1px solid #2a4a2a;
+    border-radius: 4px;
+    padding: 20px;
+    flex: 1;
+    cursor: pointer;
+    transition: border-color .2s, transform .15s;
+  }
+  .card:hover { border-color: var(--gold); transform: translateY(-2px); }
+  .card-tag {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .card-title {
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    color: var(--cream);
+    margin-bottom: 6px;
+  }
+  .card-sub { font-size: 12px; color: var(--gold-dim); }
+  .badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--green);
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 3px 8px;
+    border-radius: 2px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-top: 10px;
+  }
+
+  .promo-card {
+    background: var(--green);
+    border: 1px solid #2a4a2a;
+    border-radius: 4px;
+    padding: 18px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+  .promo-card:hover { border-color: var(--gold); }
+  .promo-info .p-title {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    color: var(--cream);
+    margin-bottom: 4px;
+  }
+  .promo-info .p-sub { font-size: 11px; color: var(--gold-dim); }
+  .promo-arrow { color: var(--gold); font-size: 18px; }
+
+  .loyalty-block {
+    margin-top: 28px;
+    background: var(--green);
+    border: 1px solid #2a4a2a;
+    border-radius: 4px;
+    padding: 20px;
+  }
+  .loyalty-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .loyalty-bar-bg {
+    height: 6px;
+    background: #2a4a2a;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .loyalty-bar-fill {
+    height: 100%;
+    width: 62%;
+    background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+    border-radius: 3px;
+  }
+  .loyalty-text { font-size: 11px; color: var(--gold-dim); }
+
+  /* ══════════════════════════════════
+     LOGIN PAGE
+  ══════════════════════════════════ */
+  #login {
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .login-box {
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+  .login-logo { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .login-wordmark {
+    font-family: 'Cinzel', serif;
+    font-size: 36px;
+    letter-spacing: 12px;
+    color: var(--gold);
+  }
+  .login-tagline {
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+  }
+  .login-form { width: 100%; display: flex; flex-direction: column; gap: 14px; }
+  .field label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .field input {
+    width: 100%;
+    background: var(--green-light);
+    border: 1px solid #2a4a2a;
+    color: var(--cream);
+    padding: 12px 14px;
+    font-family: 'Raleway', sans-serif;
+    font-size: 13px;
+    outline: none;
+    border-radius: 2px;
+    transition: border-color .2s;
+  }
+  .field input:focus { border-color: var(--gold); }
+  .btn-primary {
+    width: 100%;
+    background: var(--gold);
+    color: var(--green);
+    border: none;
+    padding: 14px;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background .2s;
+    margin-top: 6px;
+  }
+  .btn-primary:hover { background: var(--cream); }
+  .login-footer { font-size: 12px; color: var(--gold-dim); text-align: center; }
+  .login-footer span { color: var(--gold); cursor: pointer; }
+  .login-footer span:hover { text-decoration: underline; }
+
+  /* ══════════════════════════════════
+     MENU PAGE
+  ══════════════════════════════════ */
+  #menu .page-header {
+    padding: 32px 48px 20px;
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+  }
+  .page-title {
+    font-family: 'Cinzel', serif;
+    font-size: 28px;
+    letter-spacing: 6px;
+    color: var(--gold);
+  }
+  .category-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 0 48px 24px;
+  }
+  .tab {
+    padding: 8px 20px;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    transition: all .2s;
+    color: var(--gold-dim);
+    background: transparent;
+    font-family: 'Raleway', sans-serif;
+  }
+  .tab.active, .tab:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: var(--green-light);
+  }
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 0 48px 40px;
+  }
+  .menu-item {
+    background: var(--green-light);
+    border: 1px solid #2a4a2a;
+    border-radius: 4px;
+    padding: 24px;
+    cursor: pointer;
+    transition: border-color .2s, transform .15s;
+    position: relative;
+  }
+  .menu-item:hover { border-color: var(--gold); transform: translateY(-3px); }
+  .item-emoji { font-size: 32px; margin-bottom: 14px; }
+  .item-name {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    color: var(--cream);
+    margin-bottom: 6px;
+  }
+  .item-desc { font-size: 11px; color: var(--gold-dim); margin-bottom: 14px; line-height: 1.5; }
+  .item-footer { display: flex; align-items: center; justify-content: space-between; }
+  .item-price { font-family: 'Cinzel', serif; font-size: 15px; color: var(--gold); }
+  .add-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--green);
+    border: none;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+  }
+  .add-btn:hover { background: var(--cream); }
+
+  /* ══════════════════════════════════
+     CART PAGE
+  ══════════════════════════════════ */
+  #cart .page-header { padding: 32px 48px 28px; }
+  .cart-layout {
+    display: flex;
+    gap: 32px;
+    padding: 0 48px 40px;
+    flex: 1;
+  }
+  .cart-items { flex: 1.4; }
+  .cart-summary {
+    flex: 1;
+    background: var(--green-light);
+    border: 1px solid #2a4a2a;
+    border-radius: 4px;
+    padding: 28px;
+    height: fit-content;
+    position: sticky;
+    top: 80px;
+  }
+  .cart-item-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid #2a4a2a;
+  }
+  .ci-emoji { font-size: 28px; }
+  .ci-info { flex: 1; }
+  .ci-name { font-family: 'Cinzel', serif; font-size: 13px; color: var(--cream); margin-bottom: 4px; }
+  .ci-mod { font-size: 11px; color: var(--gold-dim); }
+  .ci-qty {
+    display: flex; align-items: center; gap: 10px;
+    color: var(--gold); font-family: 'Cinzel', serif; font-size: 14px;
+  }
+  .qty-btn {
+    background: var(--green);
+    border: 1px solid #2a4a2a;
+    color: var(--gold);
+    width: 24px; height: 24px;
+    border-radius: 2px;
+    cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color .2s;
+  }
+  .qty-btn:hover { border-color: var(--gold); }
+  .ci-price { font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold); min-width: 60px; text-align: right; }
+
+  .summary-title { font-family: 'Cinzel', serif; font-size: 16px; letter-spacing: 3px; margin-bottom: 20px; color: var(--cream); }
+  .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; color: var(--gold-dim); }
+  .summary-total { border-top: 1px solid var(--gold-dim); padding-top: 14px; margin-top: 14px; display: flex; justify-content: space-between; font-family: 'Cinzel', serif; font-size: 16px; color: var(--gold); }
+  .checkout-btn {
+    width: 100%;
+    background: var(--gold);
+    color: var(--green);
+    border: none;
+    padding: 14px;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    margin-top: 20px;
+    transition: background .2s;
+  }
+  .checkout-btn:hover { background: var(--cream); }
+
+  /* ══════════════════════════════════
+     ADMIN PAGE
+  ══════════════════════════════════ */
+  #admin .page-header { padding: 32px 48px 28px; }
+  .admin-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 0 48px 28px;
+  }
+  .stat-card {
+    background: var(--green-light);
+    border: 1px solid #2a4a2a;
+    border-radius: 4px;
+    padding: 24px;
+  }
+  .stat-label { font-size: 9px; letter-spacing: 3px; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 10px; }
+  .stat-value { font-family: 'Cinzel', serif; font-size: 28px; color: var(--gold); }
+  .stat-change { font-size: 11px; color: #5a9a5a; margin-top: 4px; }
+
+  .admin-body { display: flex; gap: 16px; padding: 0 48px 40px; flex: 1; }
+  .admin-orders { flex: 1.6; }
+  .admin-quick { flex: 1; }
+  .section-head { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 4px; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 16px; }
+  .order-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--green-light);
+    border: 1px solid #2a4a2a;
+    border-radius: 3px;
+    margin-bottom: 8px;
+  }
+  .or-id { font-size: 11px; color: var(--gold-dim); }
+  .or-name { font-family: 'Cinzel', serif; font-size: 13px; color: var(--cream); }
+  .or-status {
+    font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 2px;
+  }
+  .status-pending { background: #4a3a10; color: #c9a030; }
+  .status-done { background: #0a3a1a; color: #5a9a5a; }
+  .status-making { background: #1a2a4a; color: #5a7ac9; }
+  .quick-btn {
+    width: 100%;
+    background: var(--green-light);
+    border: 1px solid #2a4a2a;
+    color: var(--gold);
+    padding: 14px 16px;
+    text-align: left;
+    font-family: 'Raleway', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    transition: border-color .2s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .quick-btn:hover { border-color: var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- ══════════ LOGIN ══════════ -->
+<div id="login" class="page active">
+  <div class="login-box">
+    <div class="login-logo">
+      <!-- K Logo SVG -->
+      <svg width="70" height="70" viewBox="0 0 100 100" class="koff-svg">
+        <ellipse cx="50" cy="50" rx="46" ry="46" fill="none" stroke="#c9a96e" stroke-width="2.5"/>
+        <line x1="50" y1="4" x2="50" y2="96" stroke="#c9a96e" stroke-width="1.5" opacity=".5"/>
+        <line x1="4" y1="50" x2="96" y2="50" stroke="#c9a96e" stroke-width="1.5" opacity=".3"/>
+        <!-- K letter -->
+        <line x1="36" y1="28" x2="36" y2="72" stroke="#c9a96e" stroke-width="4" stroke-linecap="round"/>
+        <line x1="36" y1="50" x2="64" y2="28" stroke="#c9a96e" stroke-width="4" stroke-linecap="round"/>
+        <line x1="36" y1="50" x2="64" y2="72" stroke="#c9a96e" stroke-width="4" stroke-linecap="round"/>
+        <!-- wedge lines from sketch -->
+        <line x1="50" y1="50" x2="92" y2="30" stroke="#c9a96e" stroke-width="1" opacity=".25"/>
+        <line x1="50" y1="50" x2="92" y2="70" stroke="#c9a96e" stroke-width="1" opacity=".25"/>
+      </svg>
+      <div class="login-wordmark">KOFF</div>
+      <div class="login-tagline">Smart Coffee System</div>
+    </div>
+
+    <div class="divider" style="width:100%"></div>
+
+    <div class="login-form">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" placeholder="your@email.com">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" placeholder="••••••••">
+      </div>
+      <button class="btn-primary" onclick="goTo('home')">Sign In</button>
+    </div>
+    <div class="login-footer">
+      Don't have an account? <span onclick="goTo('home')">Register</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ NAV (shared, injected into each page) ══════════ -->
+<template id="nav-tpl">
+  <nav>
+    <div class="nav-left">
+      <a onclick="goTo('menu')">Menu</a>
+      <a onclick="goTo('home')">Profile</a>
+    </div>
+    <!-- KOFF center logo -->
+    <a onclick="goTo('home')" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+      <svg width="32" height="32" viewBox="0 0 100 100">
+        <ellipse cx="50" cy="50" rx="46" ry="46" fill="none" stroke="#c9a96e" stroke-width="2.5"/>
+        <line x1="50" y1="4" x2="50" y2="96" stroke="#c9a96e" stroke-width="1.5" opacity=".4"/>
+        <line x1="36" y1="28" x2="36" y2="72" stroke="#c9a96e" stroke-width="4" stroke-linecap="round"/>
+        <line x1="36" y1="50" x2="64" y2="28" stroke="#c9a96e" stroke-width="4" stroke-linecap="round"/>
+        <line x1="36" y1="50" x2="64" y2="72" stroke="#c9a96e" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+      <span style="font-family:'Cinzel',serif;font-size:18px;letter-spacing:5px;color:#c9a96e">KOFF</span>
+    </a>
+    <div class="nav-right">
+      <a onclick="goTo('menu')">Customize</a>
+      <a onclick="goTo('orders')">Orders</a>
+      <a onclick="goTo('admin')">Admin</a>
+      <a onclick="goTo('login')" class="logout">Log Out</a>
+    </div>
+  </nav>
+  <div class="divider"></div>
+</template>
+
+<!-- ══════════ HOME ══════════ -->
+<div id="home" class="page">
+  <div class="hero">
+    <div class="logo-block">
+      <svg width="90" height="90" viewBox="0 0 100 100" class="koff-svg">
+        <ellipse cx="50" cy="50" rx="46" ry="46" fill="none" stroke="#c9a96e" stroke-width="2.5"/>
+        <line x1="50" y1="4" x2="50" y2="96" stroke="#c9a96e" stroke-width="1.5" opacity=".4"/>
+        <line x1="4" y1="50" x2="96" y2="50" stroke="#c9a96e" stroke-width="1.5" opacity=".2"/>
+        <line x1="36" y1="28" x2="36" y2="72" stroke="#c9a96e" stroke-width="5" stroke-linecap="round"/>
+        <line x1="36" y1="50" x2="64" y2="28" stroke="#c9a96e" stroke-width="5" stroke-linecap="round"/>
+        <line x1="36" y1="50" x2="64" y2="72" stroke="#c9a96e" stroke-width="5" stroke-linecap="round"/>
+        <line x1="50" y1="50" x2="94" y2="28" stroke="#c9a96e" stroke-width="1" opacity=".2"/>
+        <line x1="50" y1="50" x2="94" y2="72" stroke="#c9a96e" stroke-width="1" opacity=".2"/>
+      </svg>
+      <span class="koff-wordmark">KOFF</span>
+    </div>
+    <!-- coffee bean SVG -->
+    <svg class="coffee-bean" viewBox="0 0 80 110" fill="none">
+      <ellipse cx="40" cy="55" rx="32" ry="48" fill="#7a4a20" opacity=".9"/>
+      <path d="M40 10 Q55 55 40 100" stroke="#5a3010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="divider"></div>
+
+  <div class="home-body">
+    <!-- LEFT: Rec + Best -->
+    <div class="home-left">
+      <div class="section-label">Recommendation and Promos</div>
+
+      <div class="card-row">
+        <div class="card" onclick="goTo('menu')">
+          <div class="card-tag">Rec</div>
+          <div class="card-title">Oat Flat White</div>
+          <div class="card-sub">Based on your history</div>
+          <div class="badge">Try Again</div>
+        </div>
+        <div class="card" onclick="goTo('menu')">
+          <div class="card-tag">Best</div>
+          <div class="card-title">Cold Brew</div>
+          <div class="card-sub">Most ordered this week</div>
+          <div class="badge">Popular</div>
+        </div>
+      </div>
+
+      <div class="promo-card">
+        <div class="promo-info">
+          <div class="p-title">Happy Hour — 20% Off</div>
+          <div class="p-sub">Every day 2PM – 4PM</div>
+        </div>
+        <div class="promo-arrow">→</div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-info">
+          <div class="p-title">Buy 2 Get 1 Free</div>
+          <div class="p-sub">Iced drinks only · Today</div>
+        </div>
+        <div class="promo-arrow">→</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: First Order + Loyal -->
+    <div class="home-right">
+      <div class="section-label">First Order</div>
+      <div class="card" style="margin-bottom:24px" onclick="goTo('menu')">
+        <div class="card-tag">Welcome Offer</div>
+        <div class="card-title">Free Size Upgrade</div>
+        <div class="card-sub">On your first order today</div>
+        <div class="badge">Claim Now →</div>
+      </div>
+
+      <div class="loyalty-block">
+        <div class="loyalty-label">Loyal — Your Points</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+          <span style="font-family:'Cinzel',serif;font-size:22px;color:var(--gold)">620</span>
+          <span style="font-size:11px;color:var(--gold-dim);align-self:flex-end">/ 1000 pts</span>
+        </div>
+        <div class="loyalty-bar-bg">
+          <div class="loyalty-bar-fill"></div>
+        </div>
+        <div class="loyalty-text">380 pts until your next free drink ☕</div>
+        <div style="margin-top:14px;display:flex;justify-content:center">
+          <svg width="36" height="36" viewBox="0 0 100 100" opacity=".4">
+            <ellipse cx="50" cy="50" rx="46" ry="46" fill="none" stroke="#c9a96e" stroke-width="2.5"/>
+            <line x1="36" y1="28" x2="36" y2="72" stroke="#c9a96e" stroke-width="4" stroke-linecap="round"/>
+            <line x1="36" y1="50" x2="64" y2="28" stroke="#c9a96e" stroke-width="4" stroke-linecap="round"/>
+            <line x1="36" y1="50" x2="64" y2="72" stroke="#c9a96e" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MENU ══════════ -->
+<div id="menu" class="page">
+  <div class="page-header">
+    <div class="page-title">Menu</div>
+  </div>
+  <div class="divider" style="margin-bottom:20px"></div>
+  <div class="category-tabs">
+    <button class="tab active" onclick="filterTab(this)">All</button>
+    <button class="tab" onclick="filterTab(this)">Hot</button>
+    <button class="tab" onclick="filterTab(this)">Iced</button>
+    <button class="tab" onclick="filterTab(this)">Cold Brew</button>
+    <button class="tab" onclick="filterTab(this)">Food</button>
+  </div>
+  <div class="menu-grid">
+    <div class="menu-item">
+      <div class="item-emoji">☕</div>
+      <div class="item-name">Espresso</div>
+      <div class="item-desc">Double shot, dark roast. Clean and bold.</div>
+      <div class="item-footer">
+        <span class="item-price">25 EGP</span>
+        <button class="add-btn" onclick="addToCart('Espresso',25)">+</button>
+      </div>
+    </div>
+    <div class="menu-item">
+      <div class="item-emoji">🥛</div>
+      <div class="item-name">Flat White</div>
+      <div class="item-desc">Velvety microfoam over a ristretto base.</div>
+      <div class="item-footer">
+        <span class="item-price">45 EGP</span>
+        <button class="add-btn" onclick="addToCart('Flat White',45)">+</button>
+      </div>
+    </div>
+    <div class="menu-item">
+      <div class="item-emoji">🧊</div>
+      <div class="item-name">Cold Brew</div>
+      <div class="item-desc">Steeped 18 hours. Smooth, low acid.</div>
+      <div class="item-footer">
+        <span class="item-price">55 EGP</span>
+        <button class="add-btn" onclick="addToCart('Cold Brew',55)">+</button>
+      </div>
+    </div>
+    <div class="menu-item">
+      <div class="item-emoji">🍵</div>
+      <div class="item-name">Matcha Latte</div>
+      <div class="item-desc">Ceremonial grade, oat milk by default.</div>
+      <div class="item-footer">
+        <span class="item-price">60 EGP</span>
+        <button class="add-btn" onclick="addToCart('Matcha Latte',60)">+</button>
+      </div>
+    </div>
+    <div class="menu-item">
+      <div class="item-emoji">☁️</div>
+      <div class="item-name">Oat Cappuccino</div>
+      <div class="item-desc">Light body, perfectly balanced foam.</div>
+      <div class="item-footer">
+        <span class="item-price">50 EGP</span>
+        <button class="add-btn" onclick="addToCart('Oat Cappuccino',50)">+</button>
+      </div>
+    </div>
+    <div class="menu-item">
+      <div class="item-emoji">🍫</div>
+      <div class="item-name">Mocha</div>
+      <div class="item-desc">Dark chocolate meets espresso. Rich.</div>
+      <div class="item-footer">
+        <span class="item-price">55 EGP</span>
+        <button class="add-btn" onclick="addToCart('Mocha',55)">+</button>
+      </div>
+    </div>
+  </div>
+  <div style="padding:0 48px 20px;display:flex;justify-content:flex-end">
+    <button class="btn-primary" style="width:auto;padding:12px 28px" onclick="goTo('cart')">View Cart (<span id="cart-count">0</span>)</button>
+  </div>
+</div>
+
+<!-- ══════════ CART ══════════ -->
+<div id="cart" class="page">
+  <div class="page-header">
+    <div class="page-title">Cart</div>
+  </div>
+  <div class="divider" style="margin-bottom:24px"></div>
+  <div class="cart-layout">
+    <div class="cart-items" id="cart-items-list">
+      <p style="color:var(--gold-dim);font-size:13px">Your cart is empty. <span style="color:var(--gold);cursor:pointer" onclick="goTo('menu')">Browse the menu →</span></p>
+    </div>
+    <div class="cart-summary">
+      <div class="summary-title">Order Summary</div>
+      <div class="summary-row"><span>Subtotal</span><span id="s-sub">0 EGP</span></div>
+      <div class="summary-row"><span>Discount</span><span style="color:#5a9a5a">— 0 EGP</span></div>
+      <div class="summary-row"><span>Points earned</span><span>+0 pts</span></div>
+      <div class="summary-total"><span>Total</span><span id="s-total">0 EGP</span></div>
+      <button class="checkout-btn">Place Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ORDERS (stub) ══════════ -->
+<div id="orders" class="page">
+  <div class="page-header">
+    <div class="page-title">My Orders</div>
+  </div>
+  <div class="divider" style="margin-bottom:28px"></div>
+  <div style="padding:0 48px">
+    <div class="order-row">
+      <div><div class="or-id">#ORD-0042 · 10 min ago</div><div class="or-name">Cold Brew + Oat Cappuccino</div></div>
+      <span class="or-status status-making">Making</span>
+    </div>
+    <div class="order-row">
+      <div><div class="or-id">#ORD-0039 · Yesterday</div><div class="or-name">Flat White</div></div>
+      <span class="or-status status-done">Done</span>
+    </div>
+    <div class="order-row">
+      <div><div class="or-id">#ORD-0035 · 2 days ago</div><div class="or-name">Espresso × 2</div></div>
+      <span class="or-status status-done">Done</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ADMIN ══════════ -->
+<div id="admin" class="page">
+  <div class="page-header">
+    <div class="page-title">Admin</div>
+  </div>
+  <div class="divider" style="margin-bottom:24px"></div>
+  <div class="admin-grid">
+    <div class="stat-card">
+      <div class="stat-label">Today's Orders</div>
+      <div class="stat-value">47</div>
+      <div class="stat-change">↑ 12% vs yesterday</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Revenue</div>
+      <div class="stat-value">2,340</div>
+      <div class="stat-change">EGP today</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Active Users</div>
+      <div class="stat-value">18</div>
+      <div class="stat-change">Currently in app</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Top Item</div>
+      <div class="stat-value" style="font-size:18px">Cold Brew</div>
+      <div class="stat-change">14 orders</div>
+    </div>
+  </div>
+  <div class="admin-body">
+    <div class="admin-orders">
+      <div class="section-head">Live Orders</div>
+      <div class="order-row">
+        <div><div class="or-id">#ORD-0047</div><div class="or-name">Ahmed — Flat White × 2</div></div>
+        <span class="or-status status-pending">Pending</span>
+      </div>
+      <div class="order-row">
+        <div><div class="or-id">#ORD-0046</div><div class="or-name">Sara — Cold Brew</div></div>
+        <span class="or-status status-making">Making</span>
+      </div>
+      <div class="order-row">
+        <div><div class="or-id">#ORD-0045</div><div class="or-name">Omar — Mocha + Matcha</div></div>
+        <span class="or-status status-done">Ready</span>
+      </div>
+    </div>
+    <div class="admin-quick">
+      <div class="section-head">Quick Actions</div>
+      <button class="quick-btn">📋 Manage Menu</button>
+      <button class="quick-btn">👥 Users</button>
+      <button class="quick-btn">🏷️ Add Promo</button>
+      <button class="quick-btn">📊 Reports</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const pages = ['login','home','menu','cart','orders','admin'];
+  const pagesWithNav = ['home','menu','cart','orders','admin'];
+  const navTpl = document.getElementById('nav-tpl');
+  let cartItems = [];
+
+  // Inject nav into pages that need it
+  pagesWithNav.forEach(id => {
+    const pg = document.getElementById(id);
+    const nav = navTpl.content.cloneNode(true);
+    pg.insertBefore(nav, pg.firstChild);
+  });
+
+  function goTo(id) {
+    pages.forEach(p => {
+      document.getElementById(p).classList.remove('active');
+    });
+    document.getElementById(id).classList.add('active');
+    if(id === 'cart') renderCart();
+  }
+
+  function filterTab(el) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function addToCart(name, price) {
+    const existing = cartItems.find(i => i.name === name);
+    if(existing) { existing.qty++; }
+    else { cartItems.push({ name, price, qty: 1 }); }
+    document.getElementById('cart-count').textContent = cartItems.reduce((s,i)=>s+i.qty,0);
+    // flash feedback
+    const btn = event.target;
+    btn.textContent = '✓';
+    btn.style.background = '#5a9a5a';
+    setTimeout(()=>{ btn.textContent='+'; btn.style.background=''; }, 600);
+  }
+
+  function renderCart() {
+    const list = document.getElementById('cart-items-list');
+    const sub = document.getElementById('s-sub');
+    const tot = document.getElementById('s-total');
+    if(!cartItems.length) {
+      list.innerHTML = `<p style="color:var(--gold-dim);font-size:13px">Your cart is empty. <span style="color:var(--gold);cursor:pointer" onclick="goTo('menu')">Browse the menu →</span></p>`;
+      sub.textContent = '0 EGP'; tot.textContent = '0 EGP'; return;
+    }
+    let total = 0;
+    list.innerHTML = cartItems.map((item,i) => {
+      total += item.price * item.qty;
+      return `<div class="cart-item-row">
+        <div class="ci-emoji">☕</div>
+        <div class="ci-info">
+          <div class="ci-name">${item.name}</div>
+          <div class="ci-mod">Standard · Hot</div>
+        </div>
+        <div class="ci-qty">
+          <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
+          <span>${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
+        </div>
+        <div class="ci-price">${item.price * item.qty} EGP</div>
+      </div>`;
+    }).join('');
+    sub.textContent = total + ' EGP';
+    tot.textContent = total + ' EGP';
+  }
+
+  function changeQty(i, delta) {
+    cartItems[i].qty += delta;
+    if(cartItems[i].qty <= 0) cartItems.splice(i,1);
+    document.getElementById('cart-count').textContent = cartItems.reduce((s,i)=>s+i.qty,0);
+    renderCart();
+  }
+</script>
+</body>
+</html>
