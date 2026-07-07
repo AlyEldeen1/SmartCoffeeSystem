@@ -1,20 +1,20 @@
-const {getAllcategories, getCategoryById, createCategory,updateCategory} = require('../models/categoryModel');
+const { getAllCategories, getCategoryById, createCategory, updateCategory, deleteCategory } = require('../models/categoryModel');
 
-exports.getCategories = async(req, res) => {
+exports.getCategories = async (req, res) => {
     try {
-        const categories = await getAllcategories();
-        res.json({categories});
+        const categories = await getAllCategories();
+        res.json({ categories });
     } catch (error) {
-        res.status(500).json({ error: error.message});
+        res.status(500).json({ error: error.message });
     }
 };
 
-exports.getCategory = async(req, res) => {
+exports.getCategory = async (req, res) => {
     const { id } = req.params;
     try {
         const category = await getCategoryById(id);
-        if(!category) {
-            return res.status(404).json({ messages: 'Category not found '});
+        if (!category) {
+            return res.status(404).json({ messages: 'Category not found ' });
         }
         res.json({ category });
     } catch (error) {
@@ -22,24 +22,24 @@ exports.getCategory = async(req, res) => {
     }
 };
 
-exports.addCategory = async(req, res) => {
+exports.addCategory = async (req, res) => {
     const { name, description, image_url } = req.body;
     if (!name) {
         return res.status(400).json({ message: 'Name is required' });
     }
     try {
         const newCategory = await createCategory(name, description, image_url);
-        res.status(201).json({message: 'Category created successfully', category: newCategory});
+        res.status(201).json({ message: 'Category created successfully', category: newCategory });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 
 };
 
-exports.editCategory = async(req, res) => {
+exports.editCategory = async (req, res) => {
     const { id } = req.params;
     const { name, description, image_url } = req.body;
-     if (!name) {
+    if (!name) {
         return res.status(400).json({ message: 'name is required' });
     }
     try {

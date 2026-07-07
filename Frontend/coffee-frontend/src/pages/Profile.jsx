@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import API from "../services/api";
+import Navbar from "../components/Navbar";
 
 const COLORS = {
   green: "#172c17",
@@ -88,43 +89,8 @@ export default function Profile() {
     <div className="min-h-screen" style={{ background: COLORS.green }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500&display=swap');`}</style>
 
-      {/* Header */}
-      <nav
-        className="flex items-center gap-4 p-6 sticky top-0 z-50"
-        style={{
-          background: COLORS.green,
-          borderBottom: `1px solid ${COLORS.goldDim}`,
-          opacity: 0.95,
-        }}
-      >
-        <button
-          onClick={() => navigate("/dashboard")}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            color: COLORS.gold,
-            transition: "color 0.2s",
-            padding: 0,
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.cream)}
-          onMouseLeave={(e) => (e.currentTarget.style.color = COLORS.gold)}
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <h1
-          style={{
-            fontFamily: "'Cinzel', serif",
-            fontSize: "20px",
-            letterSpacing: "3px",
-            color: COLORS.gold,
-          }}
-        >
-          PROFILE
-        </h1>
-      </nav>
-
-      <div style={{ borderBottom: `1px solid ${COLORS.goldDim}`, opacity: 0.3 }} />
+      {/* Reusable Navbar */}
+      <Navbar role={user?.role} />
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto p-6 md:p-10">

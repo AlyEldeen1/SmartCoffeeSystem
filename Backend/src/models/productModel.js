@@ -4,7 +4,7 @@ const getAllProductsByCategory = async (categoryId) => {
     const result = await pool.query(
         `SELECT id, name, description, price, image_url, is_available
          FROM products
-         WHERE category_id = $1 AND is_available = true`,
+         WHERE category_id = $1`,
         [categoryId]
     );
     return result.rows;
@@ -53,10 +53,19 @@ const toggleProductAvailability = async (id) => {
     return result.rows[0];
 };
 
+const deleteProduct = async (id) => {
+    const result = await pool.query(
+        `DELETE FROM products WHERE id = $1 RETURNING id`,
+        [id]
+    );
+    return result.rows[0];
+};
+
 module.exports = {
     getAllProductsByCategory,
     getProductById,
     createProduct,
     updateProduct,
-    toggleProductAvailability
+    toggleProductAvailability,
+    deleteProduct
 };

@@ -1,4 +1,4 @@
-const {getAllProductsByCategory, getProductById, createProduct, updateProduct, toggleProductAvailability} = require('../models/productModel');
+const {getAllProductsByCategory, getProductById, createProduct, updateProduct, toggleProductAvailability, deleteProduct: deleteProductFromDb} = require('../models/productModel');
 // get products 
 exports.getProductsByCategory = async(req, res) => {
     const { categoryId } = req.params;
@@ -72,6 +72,22 @@ exports.changeProductAvailability = async (req, res) => {
         res.json({
             message: 'Product availability updated successfully',
             product
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+exports.deleteProduct = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deleted = await deleteProductFromDb(id);
+        if (!deleted) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+        res.json({
+            message: 'Product deleted successfully',
+            product: deleted
         });
     } catch (err) {
         res.status(500).json({ error: err.message });

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogOut, Loader2, Menu, User } from "lucide-react";
 import API from "../services/api";
+import Navbar from "../components/Navbar";
 
 const COLORS = {
   green: "#172c17",
@@ -93,79 +94,8 @@ export default function Dashboard() {
     <div className="min-h-screen" style={{ background: COLORS.green }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500&display=swap');`}</style>
 
-      {/* Header Navigation */}
-      <nav
-        className="flex justify-between items-center p-6 sticky top-0 z-50"
-        style={{
-          background: COLORS.green,
-          borderBottom: `1px solid linear-gradient(90deg, transparent, ${COLORS.gold}, transparent)`,
-        }}
-      >
-        <div className="flex items-center gap-4">
-          {/* KOFF Logo */}
-          <svg width="32" height="32" viewBox="0 0 100 100" style={{ cursor: "pointer" }} onClick={() => navigate("/dashboard")}>
-            <ellipse cx="50" cy="50" rx="46" ry="46" fill="none" stroke={COLORS.gold} strokeWidth="2.5" />
-            <line x1="36" y1="28" x2="36" y2="72" stroke={COLORS.gold} strokeWidth="4" strokeLinecap="round" />
-            <line x1="36" y1="50" x2="64" y2="28" stroke={COLORS.gold} strokeWidth="4" strokeLinecap="round" />
-            <line x1="36" y1="50" x2="64" y2="72" stroke={COLORS.gold} strokeWidth="4" strokeLinecap="round" />
-          </svg>
-          <span
-            style={{
-              fontFamily: "'Cinzel', serif",
-              fontSize: "18px",
-              letterSpacing: "5px",
-              color: COLORS.gold,
-              fontWeight: 700,
-            }}
-          >
-            KOFF
-          </span>
-        </div>
-
-        {/* Navigation Links */}
-        <div className="flex items-center gap-8">
-          <button
-            onClick={() => navigate("/profile")}
-            style={{
-              color: COLORS.gold,
-              textDecoration: "none",
-              fontFamily: "'Raleway', sans-serif",
-              fontSize: "13px",
-              letterSpacing: "2px",
-              textTransform: "uppercase",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              transition: "color 0.2s",
-            }}
-            onMouseEnter={(e) => (e.target.style.color = COLORS.cream)}
-            onMouseLeave={(e) => (e.target.style.color = COLORS.gold)}
-          >
-            Profile
-          </button>
-          <button
-            style={{
-              color: COLORS.goldDim,
-              textDecoration: "none",
-              fontFamily: "'Raleway', sans-serif",
-              fontSize: "13px",
-              letterSpacing: "2px",
-              textTransform: "uppercase",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              transition: "color 0.2s",
-            }}
-            onMouseEnter={(e) => (e.target.style.color = COLORS.cream)}
-            onMouseLeave={(e) => (e.target.style.color = COLORS.goldDim)}
-            onClick={handleLogout}
-          >
-            Log Out
-          </button>
-        </div>
-      </nav>
-
-      <div style={{ borderBottom: `1px solid ${COLORS.goldDim}`, opacity: 0.3 }} />
+      {/* Reusable Navbar */}
+      <Navbar role={user?.role} />
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto p-6 md:p-10">
@@ -223,9 +153,10 @@ export default function Dashboard() {
             Quick Actions
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className={`grid grid-cols-1 ${user?.role === "admin" ? "md:grid-cols-4" : "md:grid-cols-3"} gap-4`}>
             {/* Menu Button */}
             <button
+              onClick={() => navigate("/menu")}
               style={{
                 background: COLORS.greenLight,
                 border: `1px solid #2a4a2a`,
@@ -307,6 +238,37 @@ export default function Dashboard() {
                 Earn rewards
               </p>
             </button>
+
+            {/* Admin Panel Button (Conditional) */}
+            {user?.role === "admin" && (
+              <button
+                onClick={() => navigate("/admin")}
+                style={{
+                  background: COLORS.greenLight,
+                  border: `1px solid #2a4a2a`,
+                  borderRadius: "4px",
+                  padding: "20px",
+                  cursor: "pointer",
+                  transition: "border-color 0.2s, transform 0.15s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = COLORS.gold;
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "#2a4a2a";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                <div style={{ fontSize: "28px", marginBottom: "0.5rem" }}>🛡️</div>
+                <p style={{ fontFamily: "'Cinzel', serif", fontSize: "14px", color: COLORS.cream }}>
+                  Admin Panel
+                </p>
+                <p style={{ fontSize: "11px", color: COLORS.goldDim, marginTop: "0.5rem" }}>
+                  Manage store & database
+                </p>
+              </button>
+            )}
           </div>
         </div>
       </div>

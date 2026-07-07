@@ -1,13 +1,13 @@
-# Smart Coffee System - CLAUDE.md
+# KOFF (Smart Coffee System) — CLAUDE.md
 
 ## Project Overview
 
-**Smart Coffee System** is a full-stack web application for managing coffee orders and operations. Built with Node.js/Express backend and React frontend.
+**KOFF** is a full-stack coffee shop management system built as a grad project. It includes a customer-facing UI, an admin panel, AI-powered recommendations, and inventory tracking. The goal is a functional, well-understood codebase — not just working code, but code the developer can explain and reason about.
 
 ### Tech Stack
-- **Backend**: Express.js (Node.js), PostgreSQL, JWT authentication, bcrypt
-- **Frontend**: React 19, Vite, TypeScript, Tailwind CSS, Radix UI, React Hook Form
-- **Database**: PostgreSQL (see DATABASE_ERD.png for schema)
+- **Backend**: Node.js, Express, PostgreSQL (managed via pgAdmin), JWT authentication, bcrypt
+- **Frontend**: React (Vite), shadcn/ui (Mira preset), React Hook Form, Zod, React Router
+- **Database**: PostgreSQL — 12-table schema (see `DATABASE_ERD.png`)
 
 ## Project Structure
 
@@ -16,112 +16,69 @@
 │   ├── src/
 │   │   ├── app.js                 (Express app setup, routes)
 │   │   ├── server.js              (Server entry point)
-│   │   ├── config/                (Database & JWT config)  
-│   │   ├── controllers/           (Route handlers)
-│   │   ├── models/                (Database models)
+│   │   ├── config/                (Database & JWT config)
+│   │   ├── controllers/           (Route handlers — orchestrate across models)
+│   │   ├── models/                (DB queries only — no cross-model logic)
 │   │   ├── middleware/            (Auth & CORS middleware)
 │   │   └── routes/                (API route definitions)
 │   ├── package.json
-│   └── .eslintrc.js
+│   └── eslint.config.mjs
 ├── Frontend/
 │   └── coffee-frontend/
 │       ├── src/
-│       │   ├── App.jsx            (Main app component)
-│       │   ├── pages/             (Page components)
-│       │   ├── components/        (Reusable components)
-│       │   └── styles/
+│       │   ├── App.jsx
+│       │   ├── pages/
+│       │   ├── components/
+│       │   └── services/
 │       ├── package.json
-│       ├── vite.config.js
-│       └── tailwind.config.js
-└── .github/                       (CI/CD workflows)
+│       └── vite.config.js
+└── .github/                        (CI/CD workflows)
 ```
+
+## Current State
+
+- **Backend**: Auth (register, login, JWT, role middleware) fully working. 12-table DB schema complete, all model files done. Products endpoint complete (reference implementation for conventions). Categories endpoint complete (full CRUD: create, read all, read single, update, delete with FK-safe error handling — no soft-delete/`is_active` toggle, since the FK from `products.category_id` already protects against orphaning).
+- **Outstanding**: `updateLoyaltyPoints` still needs to be added to `userModel.js` (belongs to the checkout/order flow, not blocking menu work).
+- **Frontend**: Login and Register pages built with React Hook Form + Zod, wired to `/auth/login` and `/auth/register`. Dashboard and Profile pages exist. Menu, Cart, and Admin pages not yet built. A vanilla HTML/CSS/JS mockup (`koff.html`) exists as the visual reference for styling direction.
+- Frontend build order: **Login → Menu → Cart → Orders → Admin**. Mobile responsiveness is deferred to a single pass near the end.
+
+## Working Preferences (apply to all work on this project)
+
+- Follow a modular, clean architecture: routes / controllers / services / models stay separated. Models only talk to the DB; controllers orchestrate and validate.
+- Keep code simple, readable, and practical — this is a grad project, not a production system to over-engineer.
+- Prefer step-by-step implementation over large code dumps. One function or one file at a time, with a chance to review before moving to the next.
+- Always explain *why* something is done, not just *how*. Surface design decisions and tradeoffs rather than deciding unilaterally.
+- Use RESTful API design.
+- Validate inputs and handle errors properly (manual validation, try/catch with 500 fallback, 404 for missing resources).
+- Use security best practices: hashed passwords, protected routes via `verifyToken` + `authorizeRoles`.
+- Be concise and practical — avoid long theory unless asked.
+- Break tasks into clear steps.
+- When debugging, find the root cause, not guesses.
+- When suggesting improvements, prioritize what matters most for grad-project scope — flag but don't force gold-plating.
+- New endpoints should closely follow existing conventions (the products endpoint is the canonical reference).
+- `pgAdmin` cell editing is unreliable — always use SQL queries directly in the Query Tool for data updates.
+- `localStorage` for JWT is acceptable given the grad-project scope.
 
 ## Getting Started
 
-### Backend Setup
+### Backend
 ```bash
 cd Backend
 npm install
-npm run dev          # Start with nodemon (development)
-npm start           # Start production
-npm run lint        # Run ESLint
+npm run dev          # nodemon, development
+npm start             # production
+npm run lint
 ```
 
-Backend runs on `http://localhost:5000` (or configured port)
-
-### Frontend Setup
+### Frontend
 ```bash
 cd Frontend/coffee-frontend
 npm install
-npm run dev         # Start Vite dev server
-npm run build       # Build for production
-npm run lint        # Run ESLint
+npm run dev
+npm run build
+npm run lint
 ```
 
-Frontend dev server runs on `http://localhost:5173`
-
-## Key Features Implemented
-
-- ✅ User authentication (register/login)
-- ✅ JWT-based authorization
-- ✅ Password hashing with bcrypt
-- ✅ Role-based access control
-- ✅ CORS configured for frontend/backend communication
-
-## Current Changes (Uncommitted)
-
-- `Backend/src/app.js` - Express setup updates
-- `Backend/src/controllers/authController.js` - Auth logic
-- `Backend/src/models/userModel.js` - User DB model
-- `Frontend/coffee-frontend/src/App.jsx` - Main React component
-- `Frontend/coffee-frontend/src/pages/Dashboard.jsx` - Dashboard page
-
-Untracked files: `DATABASE_ERD.png`, `KoffLogo.png`, `koff.html`, `uiux.jpg`
-
-## Important Notes
-
-### Environment Variables
-- Create `.env` files in Backend/ and Frontend/ with required variables
-- Backend needs: DATABASE_URL, JWT_SECRET, PORT
-- Frontend needs: VITE_API_URL (backend URL)
-
-### Database
-- Uses PostgreSQL - schema documented in DATABASE_ERD.png
-- Connection via `pg` package in Backend
-- Models located in `Backend/src/models/`
-
-### API Authentication
-- JWT tokens stored in request headers
-- Middleware validates tokens before accessing protected routes
-- Auth routes: `/auth/register`, `/auth/login`
-
-### Frontend/Backend Communication
-- CORS enabled for localhost:5173 (frontend dev server)
-- Credentials: true for cookie-based auth if needed
-- Use axios for API calls (already in dependencies)
-
-## Code Conventions
-
-- Backend: CommonJS modules (`require`/`module.exports`)
-- Frontend: ES modules (`import`/`export`)
-- Both use ESLint for code quality
-- Tailwind CSS for frontend styling
-- React Hook Form for form management
-
-## Debugging Tips
-
-- Backend: Use `npm run dev` with nodemon for automatic restart on file changes
-- Frontend: Vite provides fast HMR (Hot Module Replacement)
-- Check browser DevTools for frontend issues
-- Check server logs for backend errors
-- Verify CORS settings if frontend can't reach backend API
-
-## Next Steps / TODOs
-
-- [ ] Add database migrations
-- [ ] Complete dashboard functionality
-- [ ] Add coffee menu/products CRUD
-- [ ] Add order management
-- [ ] Add payment integration
-- [ ] Add testing (unit/integration tests)
-- [ ] Add API documentation (Swagger/OpenAPI)
+## Environment Variables
+- `Backend/.env`: `PORT`, `DB_USER`, `DB_HOST`, `DB_NAME`, `DB_PASSWORD`, `DB_PORT`, `JWT_SECRET`
+- Never commit `.env` — check `.gitignore` matches actual folder casing (`Backend/`, not `backend/`).
