@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken');
 exports.verifyToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     // bearer token
-    const token = authHeader && authHeader.split(' ')[1];
-    if(!token) {
+    const [scheme, token] = authHeader ? authHeader.split(' ') : [];
+    if(scheme !== 'Bearer' || !token) {
         return res.status(401).json({ error: 'Access Denied, No token'});
     }
     
@@ -15,7 +15,7 @@ exports.verifyToken = (req, res, next) => {
 
     next();
   } catch (err) {
-    return res.status(403).json({ error: 'Invalid token' });
+    return res.status(401).json({ error: 'Invalid or expired token' });
   }
 }
 

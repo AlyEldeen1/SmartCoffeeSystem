@@ -14,7 +14,7 @@ exports.getCategory = async (req, res) => {
     try {
         const category = await getCategoryById(id);
         if (!category) {
-            return res.status(404).json({ messages: 'Category not found ' });
+            return res.status(404).json({ message: 'Category not found' });
         }
         res.json({ category });
     } catch (error) {
